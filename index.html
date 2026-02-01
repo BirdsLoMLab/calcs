@@ -163,6 +163,46 @@
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
+        #hp-calc-tab input:disabled {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        #hp-calc-tab .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        #hp-calc-tab .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #hp-calc-tab .checkbox-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        #hp-calc-tab .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        #hp-calc-tab .buff-indicator {
+            color: #27ae60;
+            font-weight: 600;
+        }
+
+        #hp-calc-tab .debuff-indicator {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
         #hp-calc-tab .calc-button {
             width: 100%;
             padding: 16px;
@@ -672,18 +712,55 @@
                     <div class="section-title">Damage Configuration</div>
                     <div class="input-group">
                         <label for="dmgType">HP Damage Type</label>
-                        <select id="dmgType">
+                        <select id="dmgType" onchange="toggleCustomScaling()">
                             <option value="playerMaxHP">Player Maximum HP</option>
                             <option value="playerCurrentHP">Player Current HP</option>
                             <option value="enemyMaxHP">Enemy Maximum HP</option>
                             <option value="enemyCurrentHP">Enemy Current HP</option>
                             <option value="enemyMaxHPPal">Enemy Maximum HP (Pal Dmg)</option>
+                            <option value="customScaling">Custom Scaling</option>
                         </select>
                     </div>
                     <div class="input-grid">
                         <div class="input-group">
                             <label for="hpPerc">HP Damage % (e.g., 5 for 5%)</label>
                             <input type="number" id="hpPerc" value="5" step="0.1" min="0">
+                        </div>
+                        <div class="input-group">
+                            <label for="customScaling">Custom Scaling Multiplier (e.g., 2000 for 2000×)</label>
+                            <input type="number" id="customScaling" value="2000" step="1" min="1" disabled>
+                        </div>
+                        <div class="input-group">
+                            <label for="hpPercent">Target HP % (for Current HP types)</label>
+                            <select id="hpPercent">
+                                <option value="100">100%</option>
+                                <option value="75">75%</option>
+                                <option value="50">50%</option>
+                                <option value="25">25%</option>
+                                <option value="10">10%</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-section">
+                    <div class="section-title">Buffs & Debuffs</div>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="temporalCompression">
+                            <label for="temporalCompression">Temporal Compression (+30% ATK)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="opponentBreezy">
+                            <label for="opponentBreezy">Opponent Breezy (-20% ATK)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="gust">
+                            <label for="gust">Gust (+15% ATK)</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="coinBomb">
+                            <label for="coinBomb">Coin Bomb (+35% Basic ATK Multiplier)</label>
                         </div>
                     </div>
                 </div>
@@ -1044,20 +1121,68 @@
             return num.toFixed(2);
         }
 
+        function toggleCustomScaling() {
+            const dmgType = document.getElementById('dmgType').value;
+            const customScalingInput = document.getElementById('customScaling');
+            
+            if (dmgType === 'customScaling') {
+                customScalingInput.disabled = false;
+                customScalingInput.style.backgroundColor = 'white';
+            } else {
+                customScalingInput.disabled = true;
+                customScalingInput.style.backgroundColor = '#f5f5f5';
+            }
+        }
+
         function calculateHP() {
             const dmgType = document.getElementById('dmgType').value;
             const hpPerc = parseFloat(document.getElementById('hpPerc').value);
-            const playerATK = parseFloat(document.getElementById('playerATK').value) * 1e9;
+            const customScaling = parseFloat(document.getElementById('customScaling').value);
+            const hpPercent = parseFloat(document.getElementById('hpPercent').value);
+            
+            let playerATK = parseFloat(document.getElementById('playerATK').value) * 1e9;
             const playerHP = parseFloat(document.getElementById('playerHP').value) * 1e9;
-            const playerBasicATKMult = parseFloat(document.getElementById('playerBasicATKMult').value);
+            let playerBasicATKMult = parseFloat(document.getElementById('playerBasicATKMult').value);
             const playerLevel = parseInt(document.getElementById('playerLevel').value);
             const enemyDEF = parseFloat(document.getElementById('enemyDEF').value) * 1e9;
             const enemyHP = parseFloat(document.getElementById('enemyHP').value) * 1e9;
             const enemyLevel = parseInt(document.getElementById('enemyLevel').value);
 
+            // Get buff/debuff states
+            const temporalCompression = document.getElementById('temporalCompression').checked;
+            const opponentBreezy = document.getElementById('opponentBreezy').checked;
+            const gust = document.getElementById('gust').checked;
+            const coinBomb = document.getElementById('coinBomb').checked;
+
+            // Apply buffs/debuffs
+            let atkModifier = 1.0;
+            let basicATKModifier = 1.0;
+            let buffsList = [];
+
+            if (temporalCompression) {
+                atkModifier *= 1.30;
+                buffsList.push('<span class="buff-indicator">+30% ATK (Temporal Compression)</span>');
+            }
+            if (opponentBreezy) {
+                atkModifier *= 0.80;
+                buffsList.push('<span class="debuff-indicator">-20% ATK (Opponent Breezy)</span>');
+            }
+            if (gust) {
+                atkModifier *= 1.15;
+                buffsList.push('<span class="buff-indicator">+15% ATK (Gust)</span>');
+            }
+            if (coinBomb) {
+                basicATKModifier *= 1.35;
+                buffsList.push('<span class="buff-indicator">+35% Basic ATK Mult (Coin Bomb)</span>');
+            }
+
+            // Apply modifiers
+            playerATK *= atkModifier;
+            playerBasicATKMult *= basicATKModifier;
+
             let targetHP;
             let isMaxHP;
-            let isPalDmg = false;
+            let isCustomScaling = false;
 
             switch(dmgType) {
                 case 'playerMaxHP':
@@ -1065,7 +1190,7 @@
                     isMaxHP = true;
                     break;
                 case 'playerCurrentHP':
-                    targetHP = playerHP;
+                    targetHP = playerHP * (hpPercent / 100);
                     isMaxHP = false;
                     break;
                 case 'enemyMaxHP':
@@ -1073,13 +1198,17 @@
                     isMaxHP = true;
                     break;
                 case 'enemyCurrentHP':
-                    targetHP = enemyHP;
+                    targetHP = enemyHP * (hpPercent / 100);
                     isMaxHP = false;
                     break;
                 case 'enemyMaxHPPal':
                     targetHP = enemyHP;
                     isMaxHP = true;
-                    isPalDmg = true;
+                    break;
+                case 'customScaling':
+                    targetHP = enemyHP;
+                    isMaxHP = true;
+                    isCustomScaling = true;
                     break;
             }
 
@@ -1092,13 +1221,17 @@
 
             const minDamage = basicATKDamage * 0.8;
             let maxMultiplier;
-            if (isPalDmg) {
+            
+            if (isCustomScaling) {
+                maxMultiplier = customScaling;
+            } else if (dmgType === 'enemyMaxHPPal') {
                 maxMultiplier = 2000;
             } else if (isMaxHP) {
                 maxMultiplier = 100;
             } else {
                 maxMultiplier = 50;
             }
+            
             const maxDamage = basicATKDamage * maxMultiplier;
 
             let damage;
@@ -1122,8 +1255,11 @@
             const finalDamage = damage / pvpFactor;
             const uncappedDamage = (targetHP * (hpPerc / 100) * pvpFactor) / pvpFactor;
 
-            const finalDamagePercent = (finalDamage / targetHP) * 100;
-            const uncappedDamagePercent = (uncappedDamage / targetHP) * 100;
+            // Calculate percentages of target HP (use full HP for percentage calculation)
+            const targetHPFull = dmgType.includes('Current') ? 
+                (dmgType.includes('player') ? playerHP : enemyHP) : targetHP;
+            const finalDamagePercent = (finalDamage / targetHPFull) * 100;
+            const uncappedDamagePercent = (uncappedDamage / targetHPFull) * 100;
 
             document.getElementById('finalDamage').textContent = formatNumber(finalDamage);
             document.getElementById('finalDamagePercent').textContent = finalDamagePercent.toFixed(2) + '%';
@@ -1131,14 +1267,22 @@
             document.getElementById('uncappedDamagePercent').textContent = uncappedDamagePercent.toFixed(2) + '%';
             document.getElementById('damageStatus').textContent = status;
 
+            let buffStepsHTML = '';
+            if (buffsList.length > 0) {
+                buffStepsHTML = `<div class="step"><strong>Active Buffs/Debuffs:</strong><br>${buffsList.join('<br>')}</div>`;
+            }
+
+            const hpPercentNote = dmgType.includes('Current') ? ` (${hpPercent}% of max)` : '';
+
             const stepsHTML = `
                 <h4>Calculation Steps:</h4>
-                <div class="step"><strong>1. Target HP:</strong> ${formatNumber(targetHP)} (${dmgType})</div>
+                ${buffStepsHTML}
+                <div class="step"><strong>1. Target HP:</strong> ${formatNumber(targetHP)}${hpPercentNote} (${dmgType})</div>
                 <div class="step"><strong>2. Average Level:</strong> ${avgLevel}</div>
                 <div class="step"><strong>3. PvP Reduction Factor:</strong> ${pvpFactor.toFixed(2)}</div>
                 <div class="step"><strong>4. HP Damage (Step 1 - Before PvP):</strong> ${formatNumber(targetHP * (hpPerc / 100))}</div>
                 <div class="step"><strong>5. HP Damage (Step 2 - After × PvP Factor):</strong> ${formatNumber(hpDamage)}</div>
-                <div class="step"><strong>6. Basic ATK Damage:</strong> (${formatNumber(playerATK)} - ${formatNumber(enemyDEF)}) × ${playerBasicATKMult}% = ${formatNumber(basicATKDamage)}</div>
+                <div class="step"><strong>6. Basic ATK Damage:</strong> (${formatNumber(playerATK)} - ${formatNumber(enemyDEF)}) × ${playerBasicATKMult.toFixed(2)}% = ${formatNumber(basicATKDamage)}</div>
                 <div class="step"><strong>7. Minimum Damage (0.8×):</strong> ${formatNumber(minDamage)}</div>
                 <div class="step"><strong>8. Maximum Damage (${maxMultiplier}×):</strong> ${formatNumber(maxDamage)}</div>
                 <div class="step"><strong>9. Capped Damage (Using Step ${cappedStep}):</strong> ${formatNumber(damage)}</div>

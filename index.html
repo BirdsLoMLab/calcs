@@ -645,6 +645,180 @@
             color: #f44336;
         }
 
+        /* ===== STAT CALCULATOR STYLES ===== */
+        #stat-calc-tab {
+            padding: 20px;
+        }
+
+        #stat-calc-tab .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            color: #333;
+        }
+
+        #stat-calc-tab .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        #stat-calc-tab .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        #stat-calc-tab .header p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        #stat-calc-tab .content {
+            padding: 25px;
+        }
+
+        #stat-calc-tab .section-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: #1a237e;
+            padding: 10px 15px;
+            background: linear-gradient(135deg, #e8eaf6, #c5cae9);
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        #stat-calc-tab .stat-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        #stat-calc-tab .stat-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 12px;
+            text-align: center;
+            font-size: 0.95em;
+        }
+
+        #stat-calc-tab .stat-table th:first-child {
+            text-align: left;
+            border-radius: 8px 0 0 0;
+        }
+
+        #stat-calc-tab .stat-table th:last-child {
+            border-radius: 0 8px 0 0;
+        }
+
+        #stat-calc-tab .stat-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        #stat-calc-tab .stat-table td:first-child {
+            font-weight: 600;
+            color: #1a237e;
+            white-space: nowrap;
+        }
+
+        #stat-calc-tab .stat-table input[type="number"] {
+            width: 100%;
+            padding: 8px 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 0.95em;
+            text-align: right;
+            transition: border-color 0.3s;
+            background: #fafafa;
+        }
+
+        #stat-calc-tab .stat-table input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+        }
+
+        #stat-calc-tab .stat-table .upgrade-input {
+            border-color: #c8e6c9;
+            background: #f1f8f1;
+        }
+
+        #stat-calc-tab .stat-table .upgrade-input:focus {
+            border-color: #4caf50;
+        }
+
+        #stat-calc-tab .results-section {
+            margin-top: 10px;
+        }
+
+        #stat-calc-tab .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        #stat-calc-tab .results-table th {
+            background: #f5f5f5;
+            color: #333;
+            padding: 10px 12px;
+            text-align: center;
+            font-size: 0.9em;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        #stat-calc-tab .results-table th:first-child {
+            text-align: left;
+        }
+
+        #stat-calc-tab .results-table td {
+            padding: 10px 12px;
+            text-align: center;
+            font-size: 1em;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        #stat-calc-tab .results-table td:first-child {
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+        }
+
+        #stat-calc-tab .results-table .current-row td {
+            background: #fff8e1;
+            font-weight: 600;
+        }
+
+        #stat-calc-tab .results-table .new-row td {
+            background: #e8f5e9;
+            font-weight: 700;
+        }
+
+        #stat-calc-tab .results-table .diff-row td {
+            font-weight: 600;
+        }
+
+        #stat-calc-tab .diff-positive {
+            color: #2e7d32;
+        }
+
+        #stat-calc-tab .diff-negative {
+            color: #c62828;
+        }
+
+        #stat-calc-tab .diff-zero {
+            color: #757575;
+        }
+
+        #stat-calc-tab .unit-label {
+            font-size: 0.8em;
+            color: #757575;
+            font-weight: 400;
+        }
+
         /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .tab-navigation {
@@ -673,6 +847,11 @@
             #guardian-tab .battle-vs {
                 transform: rotate(90deg);
             }
+
+            #stat-calc-tab .stat-table input[type="number"] {
+                font-size: 0.85em;
+                padding: 6px 8px;
+            }
         }
 
         /* ===== FOOTER ===== */
@@ -697,6 +876,7 @@
     <div class="tab-navigation">
         <button class="tab-btn active" onclick="switchTab('hp-calc-tab')">⚔️ HP Damage Calculator</button>
         <button class="tab-btn" onclick="switchTab('guardian-tab')">🛡️ GuardianLife Calculator</button>
+        <button class="tab-btn" onclick="switchTab('stat-calc-tab')">📊 Stat Calculator</button>
     </div>
 
     <!-- ===== HP DAMAGE CALCULATOR TAB ===== -->
@@ -1060,6 +1240,125 @@
                             </tbody>
                         </table>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== STAT CALCULATOR TAB ===== -->
+    <div id="stat-calc-tab" class="tab-content">
+        <div class="container">
+            <div class="header">
+                <h1>📊 Legend of Mushroom</h1>
+                <p>Stat Upgrade Comparison Calculator</p>
+            </div>
+
+            <div class="content">
+                <!-- Current Stats Section -->
+                <div class="section-title">Current Stats</div>
+                <table class="stat-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>HP</th>
+                            <th>ATK</th>
+                            <th>DEF</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Stat Total</td>
+                            <td><input type="number" id="statHP" value="0" oninput="calculateStats()"></td>
+                            <td><input type="number" id="statATK" value="0" oninput="calculateStats()"></td>
+                            <td><input type="number" id="statDEF" value="0" oninput="calculateStats()"></td>
+                        </tr>
+                        <tr>
+                            <td>Base Stat Total (%)</td>
+                            <td><input type="number" id="baseHP" value="0" step="0.01" oninput="calculateStats()"></td>
+                            <td><input type="number" id="baseATK" value="0" step="0.01" oninput="calculateStats()"></td>
+                            <td><input type="number" id="baseDEF" value="0" step="0.01" oninput="calculateStats()"></td>
+                        </tr>
+                        <tr>
+                            <td>Global Stat Total (%)</td>
+                            <td><input type="number" id="globalHP" value="0" step="0.01" oninput="calculateStats()"></td>
+                            <td><input type="number" id="globalATK" value="0" step="0.01" oninput="calculateStats()"></td>
+                            <td><input type="number" id="globalDEF" value="0" step="0.01" oninput="calculateStats()"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Upgrade Section -->
+                <div class="section-title">Upgrade Values</div>
+                <table class="stat-table">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>HP</th>
+                            <th>ATK</th>
+                            <th>DEF</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>+ Stat</td>
+                            <td><input type="number" class="upgrade-input" id="upgStatHP" value="0" oninput="calculateStats()"></td>
+                            <td><input type="number" class="upgrade-input" id="upgStatATK" value="0" oninput="calculateStats()"></td>
+                            <td><input type="number" class="upgrade-input" id="upgStatDEF" value="0" oninput="calculateStats()"></td>
+                        </tr>
+                        <tr>
+                            <td>+ Base Stat (%)</td>
+                            <td><input type="number" class="upgrade-input" id="upgBaseHP" value="0" step="0.01" oninput="calculateStats()"></td>
+                            <td><input type="number" class="upgrade-input" id="upgBaseATK" value="0" step="0.01" oninput="calculateStats()"></td>
+                            <td><input type="number" class="upgrade-input" id="upgBaseDEF" value="0" step="0.01" oninput="calculateStats()"></td>
+                        </tr>
+                        <tr>
+                            <td>+ Global (%)</td>
+                            <td><input type="number" class="upgrade-input" id="upgGlobalHP" value="0" step="0.01" oninput="calculateStats()"></td>
+                            <td><input type="number" class="upgrade-input" id="upgGlobalATK" value="0" step="0.01" oninput="calculateStats()"></td>
+                            <td><input type="number" class="upgrade-input" id="upgGlobalDEF" value="0" step="0.01" oninput="calculateStats()"></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Results Section -->
+                <div class="results-section">
+                    <div class="section-title">Results</div>
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>HP <span class="unit-label">(Billions)</span></th>
+                                <th>ATK <span class="unit-label">(Millions)</span></th>
+                                <th>DEF <span class="unit-label">(Millions)</span></th>
+                            </tr>
+                        </thead>
+                        <tbody id="statResultsBody">
+                            <tr class="current-row">
+                                <td>Current Final</td>
+                                <td id="curFinalHP">0.00</td>
+                                <td id="curFinalATK">0.00</td>
+                                <td id="curFinalDEF">0.00</td>
+                            </tr>
+                            <tr class="new-row">
+                                <td>New Final</td>
+                                <td id="newFinalHP">0.00</td>
+                                <td id="newFinalATK">0.00</td>
+                                <td id="newFinalDEF">0.00</td>
+                            </tr>
+                            <tr class="diff-row">
+                                <td>Difference</td>
+                                <td id="diffHP" class="diff-zero">0.00</td>
+                                <td id="diffATK" class="diff-zero">0.00</td>
+                                <td id="diffDEF" class="diff-zero">0.00</td>
+                            </tr>
+                            <tr class="diff-row">
+                                <td>% Increase</td>
+                                <td id="pctHP" class="diff-zero">0.00%</td>
+                                <td id="pctATK" class="diff-zero">0.00%</td>
+                                <td id="pctDEF" class="diff-zero">0.00%</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -1608,6 +1907,93 @@
             if (animationInterval) {
                 playBattle();
             }
+        }
+
+        // ===== STAT CALCULATOR =====
+        function calculateStats() {
+            // Read current stats
+            const statHP = parseFloat(document.getElementById('statHP').value) || 0;
+            const statATK = parseFloat(document.getElementById('statATK').value) || 0;
+            const statDEF = parseFloat(document.getElementById('statDEF').value) || 0;
+
+            const baseHP = parseFloat(document.getElementById('baseHP').value) || 0;
+            const baseATK = parseFloat(document.getElementById('baseATK').value) || 0;
+            const baseDEF = parseFloat(document.getElementById('baseDEF').value) || 0;
+
+            const globalHP = parseFloat(document.getElementById('globalHP').value) || 0;
+            const globalATK = parseFloat(document.getElementById('globalATK').value) || 0;
+            const globalDEF = parseFloat(document.getElementById('globalDEF').value) || 0;
+
+            // Read upgrade values
+            const upgStatHP = parseFloat(document.getElementById('upgStatHP').value) || 0;
+            const upgStatATK = parseFloat(document.getElementById('upgStatATK').value) || 0;
+            const upgStatDEF = parseFloat(document.getElementById('upgStatDEF').value) || 0;
+
+            const upgBaseHP = parseFloat(document.getElementById('upgBaseHP').value) || 0;
+            const upgBaseATK = parseFloat(document.getElementById('upgBaseATK').value) || 0;
+            const upgBaseDEF = parseFloat(document.getElementById('upgBaseDEF').value) || 0;
+
+            const upgGlobalHP = parseFloat(document.getElementById('upgGlobalHP').value) || 0;
+            const upgGlobalATK = parseFloat(document.getElementById('upgGlobalATK').value) || 0;
+            const upgGlobalDEF = parseFloat(document.getElementById('upgGlobalDEF').value) || 0;
+
+            // Formula: Stat * (1 + BaseStat/100) * (1 + Global/100)
+            const curHP = statHP * (1 + baseHP / 100) * (1 + globalHP / 100);
+            const curATK = statATK * (1 + baseATK / 100) * (1 + globalATK / 100);
+            const curDEF = statDEF * (1 + baseDEF / 100) * (1 + globalDEF / 100);
+
+            const newHP = (statHP + upgStatHP) * (1 + (baseHP + upgBaseHP) / 100) * (1 + (globalHP + upgGlobalHP) / 100);
+            const newATK = (statATK + upgStatATK) * (1 + (baseATK + upgBaseATK) / 100) * (1 + (globalATK + upgGlobalATK) / 100);
+            const newDEF = (statDEF + upgStatDEF) * (1 + (baseDEF + upgBaseDEF) / 100) * (1 + (globalDEF + upgGlobalDEF) / 100);
+
+            // Convert: HP to Billions, ATK/DEF to Millions
+            const curHPB = curHP / 1e9;
+            const curATKM = curATK / 1e6;
+            const curDEFM = curDEF / 1e6;
+
+            const newHPB = newHP / 1e9;
+            const newATKM = newATK / 1e6;
+            const newDEFM = newDEF / 1e6;
+
+            const diffHPB = newHPB - curHPB;
+            const diffATKM = newATKM - curATKM;
+            const diffDEFM = newDEFM - curDEFM;
+
+            const pctHP = curHPB !== 0 ? ((diffHPB / curHPB) * 100) : 0;
+            const pctATK = curATKM !== 0 ? ((diffATKM / curATKM) * 100) : 0;
+            const pctDEF = curDEFM !== 0 ? ((diffDEFM / curDEFM) * 100) : 0;
+
+            // Display current finals
+            document.getElementById('curFinalHP').textContent = curHPB.toFixed(2);
+            document.getElementById('curFinalATK').textContent = curATKM.toFixed(2);
+            document.getElementById('curFinalDEF').textContent = curDEFM.toFixed(2);
+
+            // Display new finals
+            document.getElementById('newFinalHP').textContent = newHPB.toFixed(2);
+            document.getElementById('newFinalATK').textContent = newATKM.toFixed(2);
+            document.getElementById('newFinalDEF').textContent = newDEFM.toFixed(2);
+
+            // Display differences with color coding
+            updateDiffCell('diffHP', diffHPB);
+            updateDiffCell('diffATK', diffATKM);
+            updateDiffCell('diffDEF', diffDEFM);
+
+            // Display % increase with color coding
+            updatePctCell('pctHP', pctHP);
+            updatePctCell('pctATK', pctATK);
+            updatePctCell('pctDEF', pctDEF);
+        }
+
+        function updateDiffCell(id, value) {
+            const cell = document.getElementById(id);
+            cell.textContent = (value >= 0 ? '+' : '') + value.toFixed(2);
+            cell.className = value > 0 ? 'diff-positive' : value < 0 ? 'diff-negative' : 'diff-zero';
+        }
+
+        function updatePctCell(id, value) {
+            const cell = document.getElementById(id);
+            cell.textContent = (value >= 0 ? '+' : '') + value.toFixed(2) + '%';
+            cell.className = value > 0 ? 'diff-positive' : value < 0 ? 'diff-negative' : 'diff-zero';
         }
 
         // Initialize on page load

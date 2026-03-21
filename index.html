@@ -1158,6 +1158,13 @@
                 </div>
             </div>
 
+            <div style="text-align: center; margin: 10px 0;">
+                <label style="cursor: pointer; font-size: 0.95em; color: #c0c0c0;">
+                    <input type="checkbox" id="doubleTpenEveryHit" style="margin-right: 6px; cursor: pointer;">
+                    If double TPEN every hit <span style="color: #888; font-size: 0.85em;">(default: double TPEN on first hit only)</span>
+                </label>
+            </div>
+
             <button class="battle-button" onclick="runBattle()">⚔️ START BATTLE ⚔️</button>
 
             <div class="results" id="guardianResults">
@@ -1749,6 +1756,8 @@
             const playerBleed = Math.round(playerMaxTen * 0.1);
             const opponentBleed = Math.round(opponentMaxTen * 0.1);
 
+            const doubleTpenEveryHit = document.getElementById('doubleTpenEveryHit').checked;
+
             battleData = [];
             let playerStartTen = playerMaxTen;
             let playerRemainTen = playerMaxTen;
@@ -1763,8 +1772,15 @@
 
                 // Second 0 is starting state - no damage dealt yet
                 // Damage starts at second 1
-                const playerDealt = (second > 0 && playerAlive) ? playerTotalTpen : 0;
-                const opponentDealt = (second > 0 && opponentAlive) ? opponentTotalTpen : 0;
+                // Default: double TPEN on first hit only; checkbox: double TPEN every hit
+                let playerDealt = 0;
+                let opponentDealt = 0;
+                if (second > 0 && playerAlive) {
+                    playerDealt = (second === 1 || doubleTpenEveryHit) ? playerTotalTpen : Math.round(playerTotalTpen / 2);
+                }
+                if (second > 0 && opponentAlive) {
+                    opponentDealt = (second === 1 || doubleTpenEveryHit) ? opponentTotalTpen : Math.round(opponentTotalTpen / 2);
+                }
 
                 // Calculate damage taken (only if alive and after second 0)
                 const playerDamageTaken = (second > 0 && playerAlive) ? (opponentDealt + playerBleed) : 0;

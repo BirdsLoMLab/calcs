@@ -1236,17 +1236,21 @@
                             <thead>
                                 <tr>
                                     <th rowspan="2">Second</th>
-                                    <th colspan="5" class="table-section-header">Your Guardian</th>
-                                    <th colspan="5" class="table-section-header">Opponent Guardian</th>
+                                    <th colspan="7" class="table-section-header">Your Guardian</th>
+                                    <th colspan="7" class="table-section-header">Opponent Guardian</th>
                                 </tr>
                                 <tr>
                                     <th>Start Ten</th>
-                                    <th>Lost</th>
+                                    <th>Lost-Opp</th>
+                                    <th>Lost-10%</th>
+                                    <th>Lost-Total</th>
                                     <th>Remain Ten</th>
                                     <th>Dealt</th>
                                     <th>Status</th>
                                     <th>Start Ten</th>
-                                    <th>Lost</th>
+                                    <th>Lost-Opp</th>
+                                    <th>Lost-10%</th>
+                                    <th>Lost-Total</th>
                                     <th>Remain Ten</th>
                                     <th>Dealt</th>
                                     <th>Status</th>
@@ -1772,29 +1776,33 @@
 
                 // Second 0 is starting state - no damage dealt yet
                 // Damage starts at second 1
-                // Thunderbringer has double TPEN; default: first hit only, checkbox: every hit
+                // Thunderbringer deals double TPEN (2x base); default: first hit only, checkbox: every hit
                 const playerIsThunderbringer = playerGuardian === 'Thunderbringer';
                 const opponentIsThunderbringer = opponentGuardian === 'Thunderbringer';
                 let playerDealt = 0;
                 let opponentDealt = 0;
                 if (second > 0 && playerAlive) {
-                    if (playerIsThunderbringer) {
-                        playerDealt = (second === 1 || doubleTpenEveryHit) ? playerTotalTpen : Math.round(playerTotalTpen / 2);
+                    if (playerIsThunderbringer && (second === 1 || doubleTpenEveryHit)) {
+                        playerDealt = playerTotalTpen * 2;
                     } else {
                         playerDealt = playerTotalTpen;
                     }
                 }
                 if (second > 0 && opponentAlive) {
-                    if (opponentIsThunderbringer) {
-                        opponentDealt = (second === 1 || doubleTpenEveryHit) ? opponentTotalTpen : Math.round(opponentTotalTpen / 2);
+                    if (opponentIsThunderbringer && (second === 1 || doubleTpenEveryHit)) {
+                        opponentDealt = opponentTotalTpen * 2;
                     } else {
                         opponentDealt = opponentTotalTpen;
                     }
                 }
 
-                // Calculate damage taken (only if alive and after second 0)
-                const playerDamageTaken = (second > 0 && playerAlive) ? (opponentDealt + playerBleed) : 0;
-                const opponentDamageTaken = (second > 0 && opponentAlive) ? (playerDealt + opponentBleed) : 0;
+                // Calculate damage taken broken out: opponent damage, 10% bleed, total
+                const playerLostOpp = (second > 0 && playerAlive) ? opponentDealt : 0;
+                const playerLostBleed = (second > 0 && playerAlive) ? playerBleed : 0;
+                const playerDamageTaken = playerLostOpp + playerLostBleed;
+                const opponentLostOpp = (second > 0 && opponentAlive) ? playerDealt : 0;
+                const opponentLostBleed = (second > 0 && opponentAlive) ? opponentBleed : 0;
+                const opponentDamageTaken = opponentLostOpp + opponentLostBleed;
 
                 playerRemainTen = Math.max(0, playerStartTen - playerDamageTaken);
                 opponentRemainTen = Math.max(0, opponentStartTen - opponentDamageTaken);
@@ -1802,12 +1810,16 @@
                 battleData.push({
                     second: second,
                     playerStartTen: playerStartTen,
-                    playerLost: playerDamageTaken,
+                    playerLostOpp: playerLostOpp,
+                    playerLostBleed: playerLostBleed,
+                    playerLostTotal: playerDamageTaken,
                     playerRemainTen: playerRemainTen,
                     playerDealt: playerDealt,
                     playerAlive: playerAlive,
                     opponentStartTen: opponentStartTen,
-                    opponentLost: opponentDamageTaken,
+                    opponentLostOpp: opponentLostOpp,
+                    opponentLostBleed: opponentLostBleed,
+                    opponentLostTotal: opponentDamageTaken,
                     opponentRemainTen: opponentRemainTen,
                     opponentDealt: opponentDealt,
                     opponentAlive: opponentAlive
@@ -1875,12 +1887,16 @@
                 row.innerHTML = `
                     <td>${turn.second}</td>
                     <td>${turn.playerStartTen.toLocaleString()}</td>
-                    <td>${turn.playerLost.toLocaleString()}</td>
+                    <td>${turn.playerLostOpp.toLocaleString()}</td>
+                    <td>${turn.playerLostBleed.toLocaleString()}</td>
+                    <td>${turn.playerLostTotal.toLocaleString()}</td>
                     <td>${turn.playerRemainTen.toLocaleString()}</td>
                     <td>${turn.playerDealt.toLocaleString()}</td>
                     <td class="${turn.playerAlive ? 'status-alive' : 'status-dead'}">${turn.playerAlive ? 'Alive' : 'Dead'}</td>
                     <td>${turn.opponentStartTen.toLocaleString()}</td>
-                    <td>${turn.opponentLost.toLocaleString()}</td>
+                    <td>${turn.opponentLostOpp.toLocaleString()}</td>
+                    <td>${turn.opponentLostBleed.toLocaleString()}</td>
+                    <td>${turn.opponentLostTotal.toLocaleString()}</td>
                     <td>${turn.opponentRemainTen.toLocaleString()}</td>
                     <td>${turn.opponentDealt.toLocaleString()}</td>
                     <td class="${turn.opponentAlive ? 'status-alive' : 'status-dead'}">${turn.opponentAlive ? 'Alive' : 'Dead'}</td>

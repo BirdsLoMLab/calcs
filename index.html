@@ -1161,7 +1161,7 @@
             <div style="text-align: center; margin: 10px 0;">
                 <label style="cursor: pointer; font-size: 0.95em; color: #c0c0c0;">
                     <input type="checkbox" id="doubleTpenEveryHit" style="margin-right: 6px; cursor: pointer;">
-                    If double TPEN every hit <span style="color: #888; font-size: 0.85em;">(default: double TPEN on first hit only)</span>
+                    If double TPEN every hit <span style="color: #888; font-size: 0.85em;">(Thunderbringer only — default: double TPEN on first hit only)</span>
                 </label>
             </div>
 
@@ -1772,14 +1772,24 @@
 
                 // Second 0 is starting state - no damage dealt yet
                 // Damage starts at second 1
-                // Default: double TPEN on first hit only; checkbox: double TPEN every hit
+                // Thunderbringer has double TPEN; default: first hit only, checkbox: every hit
+                const playerIsThunderbringer = playerGuardian === 'Thunderbringer';
+                const opponentIsThunderbringer = opponentGuardian === 'Thunderbringer';
                 let playerDealt = 0;
                 let opponentDealt = 0;
                 if (second > 0 && playerAlive) {
-                    playerDealt = (second === 1 || doubleTpenEveryHit) ? playerTotalTpen : Math.round(playerTotalTpen / 2);
+                    if (playerIsThunderbringer) {
+                        playerDealt = (second === 1 || doubleTpenEveryHit) ? playerTotalTpen : Math.round(playerTotalTpen / 2);
+                    } else {
+                        playerDealt = playerTotalTpen;
+                    }
                 }
                 if (second > 0 && opponentAlive) {
-                    opponentDealt = (second === 1 || doubleTpenEveryHit) ? opponentTotalTpen : Math.round(opponentTotalTpen / 2);
+                    if (opponentIsThunderbringer) {
+                        opponentDealt = (second === 1 || doubleTpenEveryHit) ? opponentTotalTpen : Math.round(opponentTotalTpen / 2);
+                    } else {
+                        opponentDealt = opponentTotalTpen;
+                    }
                 }
 
                 // Calculate damage taken (only if alive and after second 0)

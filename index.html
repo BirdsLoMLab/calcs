@@ -877,6 +877,7 @@
         <button class="tab-btn active" onclick="switchTab('hp-calc-tab')">⚔️ HP Damage Calculator</button>
         <button class="tab-btn" onclick="switchTab('guardian-tab')">🛡️ GuardianLife Calculator</button>
         <button class="tab-btn" onclick="switchTab('stat-calc-tab')">📊 Stat Calculator</button>
+        <button class="tab-btn" onclick="switchTab('soul-tab'); fitSoulSoon();">💠 Soul Essence Calculator</button>
     </div>
 
     <!-- ===== HP DAMAGE CALCULATOR TAB ===== -->
@@ -1389,6 +1390,13 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- ===== SOUL ESSENCE CALCULATOR TAB (embeds the standalone master file) ===== -->
+    <div id="soul-tab" class="tab-content">
+        <iframe id="soulFrame" src="soul_essence_calculator.html" title="Soul Essence Calculator"
+                scrolling="no"
+                style="width:100%;border:0;display:block;min-height:1600px;background:#23150c;border-radius:12px"></iframe>
     </div>
 
     <!-- ===== FOOTER ===== -->
@@ -2093,6 +2101,45 @@
 
             updateStats();
         });
+    </script>
+
+    <!-- ===== SOUL ESSENCE CALCULATOR: auto-size embedded iframe to its content ===== -->
+    <script>
+        (function () {
+            function fitSoul() {
+                var f = document.getElementById('soulFrame');
+                if (!f || !f.contentWindow) return;
+                try {
+                    var d = f.contentWindow.document;
+                    // Measure the content wrapper (the body has min-height:100vh which
+                    // would otherwise inflate the height inside the iframe).
+                    var wrap = d.querySelector('.wrap');
+                    var h = wrap
+                        ? wrap.getBoundingClientRect().height + 48
+                        : Math.max(d.body ? d.body.scrollHeight : 0,
+                                   d.documentElement ? d.documentElement.scrollHeight : 0);
+                    if (h > 0) f.style.height = Math.ceil(h) + 'px';
+                } catch (e) { /* cross-origin guard; same-origin in production */ }
+            }
+            window.fitSoulSoon = function () { setTimeout(fitSoul, 60); setTimeout(fitSoul, 350); };
+            var f = document.getElementById('soulFrame');
+            if (f) {
+                f.addEventListener('load', function () {
+                    fitSoul();
+                    try {
+                        var d = f.contentWindow.document;
+                        var wrap = d.querySelector('.wrap');
+                        if (wrap) new ResizeObserver(fitSoul).observe(wrap);
+                        else new ResizeObserver(fitSoul).observe(d.body);
+                        // refit when the calc's own Essence/Set Builder tabs change height
+                        d.querySelectorAll('.tab').forEach(function (t) {
+                            t.addEventListener('click', function () { setTimeout(fitSoul, 30); });
+                        });
+                    } catch (e) {}
+                });
+            }
+            window.addEventListener('resize', fitSoul);
+        })();
     </script>
 </body>
 </html>
